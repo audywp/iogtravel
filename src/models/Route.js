@@ -11,10 +11,10 @@ module.exports = {
       })
     })
   },
-  createRoutes: (firstPlace, destination) => {
+  createRoutes: (idAgen, firstPlace, destination) => {
     const table = 'routes'
-    const querySql = `INSERT INTO ${table} (first_place, destination) VALUES (
-      '${firstPlace}', '${destination}'
+    const querySql = `INSERT INTO ${table} (id_busess, first_place, destination) VALUES (
+      ${idAgen}, '${firstPlace}', '${destination}'
     )`
     return new Promise((resolve, reject) => {
       db.query(querySql, (err, results, fields) => {

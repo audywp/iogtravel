@@ -4,7 +4,7 @@ const AuthMiddleware = require('../middleware/Auth')
 const AuthController = require('../controllers/Auth')
 
 Transaction.post('/login', AuthController.login)
-Transaction.get('/', AuthMiddleware.checkAuthToken, transactionController.read)
+Transaction.get('/', transactionController.read)
 Transaction.post('/', AuthMiddleware.checkAuthToken, transactionController.create)
 Transaction.patch('/:id', AuthMiddleware.checkAuthToken, transactionController.update)
 Transaction.delete('/:id', AuthMiddleware.checkAuthToken, transactionController.delete)

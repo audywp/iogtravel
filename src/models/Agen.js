@@ -3,7 +3,7 @@ const db = require('../utils/db')
 module.exports = {
   getAgen: () => {
     const table = 'agen'
-    const querySql = `SELECT id_agen FROM ${table}`
+    const querySql = `SELECT  FROM ${table}`
     return new Promise((resolve, reject) => {
       db.query(querySql, (err, results, fields) => {
         if (err) reject(err)
@@ -17,7 +17,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       db.query(querySql, (err, results, fields) => {
         if (err) reject(err)
-        else resolve(results.insertId)
+        else resolve(results)
       })
     })
   },

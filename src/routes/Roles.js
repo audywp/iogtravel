@@ -4,5 +4,6 @@ const RolesController = require('../controllers/Roles')
 // const AuthController = require('../controllers/Auth')
 
 Roles.post('/admin', RolesController.createAdmin)
+// Roles.post('/update', RolesController.updateAdmin)
 
 module.exports = Roles

@@ -1,21 +1,21 @@
 const db = require('../utils/db')
 
 module.exports = {
-  getAllUsers: function (conditions = {}) {
+  getAllUsers: (conditions = {}) => {
     let { page, perPage, sort, search } = conditions
     page = page || 1
     perPage = perPage || 5
     sort = sort || { key: 'id', value: 1 }
     search = search || { key: 'username', value: '' }
-    const table = 'users'
+    const table = 'user_detail'
     return new Promise(function (resolve, reject) {
-      const sql = `
+      const querSql = `
       SELECT * FROM ${table}
       WHERE ${search.key} LIKE '${search.value}%'
       ORDER BY ${sort.key} ${sort.value ? 'ASC' : 'DESC'}
       LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
-      console.log(sql)
-      db.query(sql, function (err, results, fields) {
+      console.log(querSql)
+      db.query(querSql, (err, results, fields) => {
         if (err) {
           reject(err)
         } else {
@@ -24,11 +24,11 @@ module.exports = {
       })
     })
   },
-  getTotalUsers: function (conditions = {}) {
+  getTotalUsers: (conditions = {}) => {
     let { search } = conditions
     search = search || { key: 'username', value: '' }
     const table = 'users'
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       const sql = `
       SELECT COUNT (*) AS total FROM ${table}
       WHERE ${search.key} LIKE '${search.value}%'`

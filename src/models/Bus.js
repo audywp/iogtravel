@@ -11,10 +11,10 @@ module.exports = {
       })
     })
   },
-  createBusess: (roleId, classBus, nameBus, sheets) => {
+  createBusess: (idAgen, classBus, sheets, price) => {
     const table = 'busess'
-    const querySql = `INSERT INTO ${table} (id_agen, class, name, sheets) VALUES
-    (${roleId}, '${classBus}', '${nameBus}', ${sheets})`
+    const querySql = `INSERT INTO ${table} (id_agen, class, sheets, price) VALUES
+    (${idAgen}, '${classBus}', ${sheets}, '${price}')`
     return new Promise((resolve, reject) => {
       db.query(querySql, (err, results, fields) => {
         if (err) reject(err)

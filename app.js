@@ -9,7 +9,8 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.get('/migrate', function (req, res) {
-  require('./src/migrations/Users')
+  const { table } = req.body
+  require(`./src/migrations/${table}`)
   const data = {
     success: true,
     msg: 'Data has been migrated'
@@ -20,30 +21,29 @@ app.get('/migrate', function (req, res) {
 app.use('/users/picture', express.static('files'))
 
 // Import Router
-const UserRoutes = require('./src/routes/Users')
+// const UserRoutes = require('./src/routes/Users')
 const AuthRoutes = require('./src/routes/Auth')
 const RolesRouters = require('./src/routes/Roles')
-const BusessRouters = require('./src/routes/Bus')
-const UserDetailRouters = require('./src/routes/User_detail')
-const RouteRouters = require('./src/routes/Route')
-const SchedulesRouters = require('./src/routes/Schedules')
-const TransactionRouters = require('./src/routes/Transaction')
+// const BusessRouters = require('./src/routes/Bus')
+// // const UserDetailRouters = require('./src/routes/User_detail')
+// const RouteRouters = require('./src/routes/Route')
+// const SchedulesRouters = require('./src/routes/Schedules')
+// const TransactionRouters = require('./src/routes/Transaction')
 const AgenRouters = require('./src/routes/Agen')
-const reservationRouters = require('./src/routes/Reservation')
-const SchedulesController = require('./src/controllers/Schedules')
-const token = require('./src/middleware/Auth')
+// const reservationRouters = require('./src/routes/Reservation')
+// const SchedulesController = require('./src/controllers/Schedules')
+// const token = require('./src/middleware/Auth')
 // Define Routes
-app.get('/', SchedulesController.read)
-app.use('/users', UserRoutes)
-app.use('/auth', AuthRoutes)
+// app.get('/', SchedulesController.read)
+// app.use('/users', UserRoutes)
+app.use('/', AuthRoutes) // register for user
 app.use('/roles', RolesRouters)
-app.use('/bus', BusessRouters)
-app.use('/user', UserDetailRouters)
-app.use('/route', RouteRouters)
-app.use('/schedules', SchedulesRouters)
-app.use('/transaction', TransactionRouters)
-app.use('/agen', token.checkAuthToken, AgenRouters)
-app.use('/reservation', reservationRouters)
+// app.use('/bus', BusessRouters)
+// app.use('/route', RouteRouters)
+// app.use('/schedules', SchedulesRouters)
+// app.use('/transaction', TransactionRouters)
+app.use('/agen', AgenRouters)
+// app.use('/reservation', reservationRouters)
 
 app.listen(process.env.APP_PORT, function () {
   console.log(`Port ${process.env.APP_PORT}`)

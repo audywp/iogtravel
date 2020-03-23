@@ -3,6 +3,14 @@ const bcrypt = require('bcryptjs')
 
 module.exports = {
   createAdmin: async function (req, res) {
+
+    if (req.user.roleId !== 1) {
+      const data = {
+        success: true,
+        msg: 'are you lost ?'
+      }
+      res.send(data)
+    }
     const { username, password, isActive, isVerified, roleId } = req.body
     const encryptedPassword = bcrypt.hashSync(password)
 
