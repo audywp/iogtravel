@@ -4,8 +4,8 @@ module.exports = {
   checkUsername: function (username) {
     const table = 'users'
     return new Promise(function (resolve, reject) {
-      const sql = `SELECT COUNT (*) AS total FROM ${table} WHERE username='${username}'`
-      db.query(sql, function (err, results, fields) {
+      const query = `SELECT COUNT (*) AS total FROM ${table} WHERE username ='${username}'`
+      db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
@@ -17,7 +17,8 @@ module.exports = {
   getUserByUsername: function (username) {
     const table = 'users'
     return new Promise(function (resolve, reject) {
-      db.query(`SELECT * FROM ${table} WHERE username='${username}'`, function (err, results, fields) {
+      const query = `SELECT * FROM ${table} WHERE username = '${username}'`
+      db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
@@ -30,10 +31,12 @@ module.exports = {
       })
     })
   },
-  createVerificationCode: function (id, code) {
+  createVerificationCode: function (id, vercode) {
     const table = 'users'
+    const query = `UPDATE ${table} SET verification_code = '${vercode}' WHERE id = ${id}`
+    console.log(query)
     return new Promise(function (resolve, reject) {
-      db.query(`UPDATE ${table} SET verification_code='${code}' WHERE id=${id}`, function (err, results, fields) {
+      db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
@@ -46,14 +49,32 @@ module.exports = {
       })
     })
   },
+  getVerificationCode: async function (username) {
+    const table = 'users'
+    return new Promise(function (resolve, reject) {
+      const query = `SELECT verification_code FROM ${table} WHERE username = '${username}'`
+      db.query(query, function (err, results, fields) {
+        if (err) {
+          reject(err)
+        } else {
+          if (results.length) {
+            resolve(results[0])
+          } else {
+            resolve(false)
+          }
+        }
+      })
+    })
+  },
   verifyUser: async function (username, code) {
     const table = 'users'
-    const check = await this.checkUsername(username)
+    const checkUser = await this.checkUsername(username)
+    const query = `UPDATE ${table} SET verification_code=${null}, is_verified = 1, is_active=1 WHERE username='${username}' AND verification_code = '${code}'`
     return new Promise(function (resolve, reject) {
-      if (!check) {
+      if (!checkUser) {
         resolve(false)
       } else {
-        db.query(`UPDATE ${table} SET verification_code=${null}, is_active=1, is_verified=1 WHERE username='${username}' AND verification_code='${code}'`, function (err, results, fields) {
+        db.query(query, function (err, results, fields) {
           if (err) {
             reject(err)
           } else {
@@ -69,32 +90,44 @@ module.exports = {
   },
   checkVerifiedUser: function (id) {
     const table = 'users'
+    const query = `SELECT COUNT (*) AS total FROM ${table} WHERE id = ${id} AND is_verified = 1`
     return new Promise(function (resolve, reject) {
-      db.query(`SELECT COUNT (*) AS total FROM ${table} WHERE id=${id} AND is_verified=1`, function (err, results, fields) {
+      db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
-          resolve(results[0].total)
+          if (results.affectedRows) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
         }
       })
     })
   },
   checkActivatedUser: function (id) {
     const table = 'users'
+    const query = `SELECT COUNT (*) AS total FROM ${table} WHERE id = ${id} AND is_active = 1`
     return new Promise(function (resolve, reject) {
-      db.query(`SELECT COUNT (*) AS total FROM ${table} WHERE id=${id} AND is_active=1`, function (err, results, fields) {
+      db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
-          resolve(results[0].total)
+          if (results.affectedRows) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
         }
       })
     })
   },
   forgotPassword: async function (uuid, newPassword) {
     const table = 'users'
+    const query = `SELECT COUNT (*) AS total FROM ${table} WHERE verification_code ='${uuid}' AND is_active=1 AND is_verified=1`
+    console.log(query)
     const checkUser = new Promise(function (resolve, reject) {
-      db.query(`SELECT COUNT (*) AS total FROM ${table} WHERE verification_code='${uuid}' AND is_active=1 AND is_verified=1`, function (err, results, fields) {
+      db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {

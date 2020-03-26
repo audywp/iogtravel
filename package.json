@@ -1,17 +1,17 @@
 {
-  "name": "app",
+  "name": "iogtravel",
   "version": "1.0.0",
-  "description": "IOG Travel",
-  "main": "app.js",
+  "description": "<h1 align=\"center\">ExpressJS - Simple Notes App RESTfull API</h1>",
+  "main": "App.js",
   "scripts": {
-    "start": "nodemon"
+    "start" : "nodemon"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/audywp/iogtravel.git"
   },
   "keywords": [],
-  "author": "audywp",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/audywp/iogtravel/issues"

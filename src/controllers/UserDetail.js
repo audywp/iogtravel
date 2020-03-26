@@ -1,70 +1,37 @@
-const UserDetailModel = require('../models/UserDetail')
-
+const UserdModel = require('../models/UserDetails')
+const AuthModel = require('../models/Auth')
 module.exports = {
-  read: async (req, res) => {
-    console.log(req.user)
-    if (req.user.roleId !== 3) {
-      const results = await UserDetailModel.getAllInformation()
+  getUserDetailByIdUser: async function (req, res) {
+    const info = await AuthModel.getUserByUsername(req.user.username)
+    const detail = await UserdModel.getUserDetailByIdUser(info.id)
+    if (detail) {
       const data = {
         success: true,
-        data: results
+        detail
       }
       res.send(data)
     } else {
-      const { id } = req.user.id
-      const results = await UserDetailModel.getUserInformation(id)
       const data = {
-        success: true,
-        data: results
+        success: false,
+        msg: 'detail not created'
       }
       res.send(data)
     }
   },
-  create: async (req, res) => {
-    const { id } = req.user.id
-    const { name, age, phone, email } = req.body
-    const results = await UserDetailModel.createUserInformation(id, name, age, phone, email)
+  updateUserDetail: async function (req, res) {
+    const info = await UserdModel.getUserDetailByIdUser(req.user.id)
+    // console.log(info.id_user)
+    const { name, email, phone } = req.body
+    const newName = name || info.name
+    const newEmail = email || info.email
+    const newPhone = phone || info.phone
+    UserdModel.updateUserDetailByIdUser(info.id_user, newName, newEmail, newPhone)
+    const newDetail = await UserdModel.getUserDetailByIdUser(info.id_user)
     const data = {
       success: true,
-      msg: 'data has been created',
-      data: results
+      msg: 'update success',
+      newDetail
     }
     res.send(data)
-  },
-  update: async (req, res) => {
-    const { id } = req.params
-    const { name, age, phone, email } = req.body
-    const results = await UserDetailModel.updateUserInformation(id, name, age, phone, email)
-    if (results) {
-      const data = {
-        success: true,
-        msg: 'data succesfully updated',
-        data: { id, ...req.body }
-      }
-      res.send(data)
-    } else {
-      const data = {
-        success: true,
-        msg: 'no data'
-      }
-      res.send(data)
-    }
-  },
-  delete: async (req, res) => {
-    const { id } = req.params
-    const results = await UserDetailModel.deleteUser(id)
-    if (results) {
-      const data = {
-        success: true,
-        msg: 'deleted'
-      }
-      res.send(data)
-    } else {
-      const data = {
-        success: true,
-        msg: 'there is no data to delete'
-      }
-      res.send(data)
-    }
   }
 }

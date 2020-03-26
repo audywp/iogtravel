@@ -1,8 +1,9 @@
 const db = require('../utils/db')
+var table = 'agents'
 module.exports = {
-  CreateBus: function (idAgent, name, busSeat) {
-    const table = 'busses'
-    const query = `INSERT INTO ${table} (id_agent,car_name,bus_seat) VALUES (${idAgent}, '${name}', ${busSeat})`
+  createAgent: function (id, name) {
+    const query = `INSERT INTO ${table} (id_user,name) VALUES (${id}, '${name}')`
+    console.log(query)
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
         if (err) {
@@ -13,46 +14,23 @@ module.exports = {
       })
     })
   },
-  updateBuss: function (id, name, size) {
+  checkUserHasAgent: function (id) {
     return new Promise(function (resolve, reject) {
-      const table = 'busses'
-      const query = `UPDATE ${table} SET car_name='${name}', bus_seat=${size} WHERE id=${id}`
+      const query = `SELECT COUNT(*) AS total FROM ${table} WHERE id_user = '${id}'`
       console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
-          if (results.affectedRows) {
-            resolve(results)
-          } else {
-            resolve(false)
-          }
+          resolve(results[0].total)
         }
       })
     })
   },
-  updateBussAdmin: function (id, idAgent, name, size) {
+  updateAgent: function (id, idUser, name) {
     return new Promise(function (resolve, reject) {
-      const table = 'busses'
-      const query = `UPDATE ${table} SET id_agent=${idAgent}, car_name='${name}', bus_seat=${size} WHERE id=${id}`
+      const query = `UPDATE ${table} SET id_user=${idUser}, name='${name}' WHERE id=${id}`
       console.log(query)
-      db.query(query, function (err, results, fields) {
-        if (err) {
-          reject(err)
-        } else {
-          if (results.affectedRows) {
-            resolve(results)
-          } else {
-            resolve(false)
-          }
-        }
-      })
-    })
-  },
-  deleteBuss: function (id) {
-    return new Promise(function (resolve, reject) {
-      const table = 'busses'
-      const query = `DELETE FROM ${table} WHERE id=${id}`
       db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
@@ -66,13 +44,63 @@ module.exports = {
       })
     })
   },
-  getAllBusses: function (conditions = {}) {
+  updateAgentForUser: function (id, name) {
+    return new Promise(function (resolve, reject) {
+      const query = `UPDATE ${table} SET  name='${name}' WHERE id=${id}`
+      console.log(query)
+      db.query(query, function (err, results, fields) {
+        if (err) {
+          reject(err)
+        } else {
+          if (results.affectedRows) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        }
+      })
+    })
+  },
+  deleteAgent: function (idUser) {
+    return new Promise(function (resolve, reject) {
+      const query = `DELETE FROM ${table} WHERE id_user=${idUser}`
+      db.query(query, function (err, results, fields) {
+        if (err) {
+          reject(err)
+        } else {
+          if (results.affectedRows) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        }
+      })
+    })
+  },
+  deleteAgentById: function (idAgent) {
+    return new Promise(function (resolve, reject) {
+      const table = 'agents'
+      const query = `DELETE FROM ${table} WHERE id = ${idAgent}`
+      db.query(query, function (err, results, fields) {
+        if (err) {
+          reject(err)
+        } else {
+          if (results.affectedRows) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        }
+      })
+    })
+  },
+  getAllAgents: function (conditions = {}) {
     let { page, perPage, sort, search } = conditions
     page = page || 1
     perPage = perPage || 5
-    sort = sort || { key: 'id', value: 0 } // value => 0 untuk ascending, 1 descending
-    search = search || { key: 'car_name', value: '' }
-    const table = 'busses'
+    sort = sort || { key: 'id', value: 1 } // value => 0 untuk ascending, 1 descending
+    search = search || { key: 'name', value: '' }
+    const table = 'agents'
     return new Promise(function (resolve, reject) {
       const sql = `SELECT * FROM ${table}
                   WHERE ${search.key} LIKE '${search.value}%'
@@ -87,12 +115,12 @@ module.exports = {
       })
     })
   },
-  getTotalBusses: function (conditions = {}) {
+  getTotalAgents: function (conditions = {}) {
     let { search } = conditions
-    search = search || { key: 'car_name', value: '' }
-    const table = 'busses'
+    search = search || { key: 'name', value: '' }
+    const table = 'agents'
     return new Promise(function (resolve, reject) {
-      const sql = `SELECT COUNT (*) AS total FROM ${table}
+      const sql = `SELECT COUNT (*) AS TOTAL FROM ${table}
                   WHERE ${search.key} LIKE '${search.value}%'`
       db.query(sql, function (err, results, fields) {
         if (err) {
@@ -103,52 +131,30 @@ module.exports = {
       })
     })
   },
-  findBusByAgent: function (id) {
-    const table = 'busses'
-    const query = `SELECT * FROM ${table} WHERE id_agent=${id}`
-    console.log(query)
+  findAgentByIdUser: function (id) {
+    const table = 'agents'
     return new Promise(function (resolve, reject) {
+      const query = `SELECT * FROM ${table} WHERE id_user=${id}`
+      console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
-          resolve(results)
+          resolve(results[0])
         }
       })
     })
   },
-  findBusById: function (id) {
-    const table = 'busses'
-    const query = `SELECT * FROM ${table} WHERE id=${id}`
-    console.log(query)
+  findAgentById: function (id) {
+    const table = 'agents'
     return new Promise(function (resolve, reject) {
+      const query = `SELECT * FROM ${table} WHERE id=${id}`
+      console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
         } else {
-          if (results.length) {
-            resolve(results[0])
-          } else {
-            resolve(false)
-          }
-        }
-      })
-    })
-  },
-  updateBussSeat: function (id) {
-    return new Promise(function (resolve, reject) {
-      const table = 'busses'
-      const query = `UPDATE ${table} SET bus_seat=bus_seat-1 WHERE id=${id}`
-      // console.log(query)
-      db.query(query, function (err, results, fields) {
-        if (err) {
-          reject(err)
-        } else {
-          if (results.affectedRows) {
-            resolve(results)
-          } else {
-            resolve(false)
-          }
+          resolve(results[0])
         }
       })
     })

@@ -1,25 +1,25 @@
 const jwt = require('jsonwebtoken')
 
 module.exports = {
-  checkAuthToken: function (req, res, next) {
+  checkToken: function (req, res, next) {
     const { authorization } = req.headers
     if (authorization && authorization.startsWith('Bearer')) {
-      let token = authorization.slice(7, authorization.length)
+      let tokenJwt = authorization.slice(7, authorization.length)
       try {
-        token = jwt.verify(token, process.env.APP_KEY)
-        if (token) {
-          req.user = token
+        tokenJwt = jwt.verify(tokenJwt, process.env.APP_KEY)
+        if (tokenJwt) {
+          req.user = tokenJwt
           next()
         } else {
           const data = {
             success: false,
-            msg: 'Unauthorized!'
+            msg: 'Unauthorized'
           }
           res.send(data)
         }
       } catch (err) {
         const data = {
-          success: false,
+          success: true,
           msg: err.message
         }
         res.send(data)
@@ -27,7 +27,7 @@ module.exports = {
     } else {
       const data = {
         success: false,
-        msg: 'Authorization needed'
+        msg: 'Unknown Token'
       }
       res.send(data)
     }

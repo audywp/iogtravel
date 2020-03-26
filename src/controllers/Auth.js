@@ -1,27 +1,86 @@
+// define a model
+const AuthModel = require('../models/Auth')
+const UserModel = require('../models/Users')
+const UserdModel = require('../models/UserDetails')
+// package
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const uuid = require('uuid').v4
-const AuthModel = require('../models/Auth')
-const UserModel = require('../models/Users')
 
 module.exports = {
+  register: async function (req, res) {
+    const { username, password, name, phone, email } = req.body
+    const picture = (req.file && req.file.filename) || null
+    const checkUser = await AuthModel.checkUsername(username)
+    if (checkUser !== 0) {
+      const data = {
+        success: false,
+        msg: 'Username already used'
+      }
+      res.send(data)
+    } else {
+      const encrypPass = bcrypt.hashSync(password)
+      const results = await UserModel.createUser(picture, username, encrypPass)
+      const info = await AuthModel.getUserByUsername(username)
+      await UserdModel.createUserDetail(info.id, name, email, phone, 0)
+      if (results) {
+        if (await AuthModel.createVerificationCode(results, uuid())) {
+          const code = await AuthModel.getVerificationCode(username)
+          const data = {
+            success: true,
+            msg: 'register success',
+            code
+          }
+          res.send(data)
+        } else {
+          const data = {
+            success: false,
+            msg: 'Verification code couldn\'t be generate'
+          }
+          res.send(data)
+        }
+      } else {
+        const data = {
+          success: false,
+          msg: 'register failed'
+        }
+        res.send(data)
+      }
+    }
+  },
+  verify: async function (req, res) {
+    const { username, code } = req.query
+    if (await AuthModel.verifyUser(username, code)) {
+      const data = {
+        success: true,
+        msg: 'User activated succesfully'
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg: 'User can\'t be activated, please register again'
+      }
+      res.send(data)
+    }
+  },
   login: async function (req, res) {
     const { username, password } = req.body
     const checkUser = await AuthModel.checkUsername(username)
     if (!checkUser) {
       const data = {
         success: false,
-        msg: 'Wrong Username or Password'
+        msg: 'Wrong username'
       }
       res.send(data)
     } else {
       const info = await AuthModel.getUserByUsername(username)
-      const checkPassword = bcrypt.compareSync(password, info.password)
-      if (checkPassword) {
-        if (await AuthModel.checkVerifiedUser(info.id)) {
-          if (await AuthModel.checkActivatedUser(info.id)) {
+      const checkPass = bcrypt.compareSync(password, info.password)
+      if (checkPass) {
+        if (await AuthModel.checkVerifiedUser) {
+          if (await AuthModel.checkActivatedUser) {
             const payload = { id: info.id, username, roleId: info.role_id }
-            const options = { expiresIn: '60m' }
+            const options = { expiresIn: '15m' }
             const key = process.env.APP_KEY
             const token = jwt.sign(payload, key, options)
             const data = {
@@ -32,91 +91,41 @@ module.exports = {
           } else {
             const data = {
               success: false,
-              msg: 'User has been deactivated!'
+              msg: 'Username not active'
             }
             res.send(data)
           }
         } else {
           const data = {
             success: false,
-            msg: 'User is not verified!'
+            msg: 'Username not verified'
           }
           res.send(data)
         }
       } else {
         const data = {
           success: false,
-          msg: 'Wrong Username or Password'
+          msg: 'Wrong Password'
         }
         res.send(data)
       }
     }
   },
-  register: async function (req, res) {
-    const { username, password, name, age, phone, email } = req.body
-    const checkUser = await AuthModel.checkUsername(username)
-    if (checkUser !== 0) {
-      const data = {
-        success: false,
-        msg: 'Username already used'
-      }
-      res.send(data)
-    } else {
-      const UserDetail = await UserModel.createUserDetail(name, age, phone, email)
-      const encryptedPassword = bcrypt.hashSync(password)
-      const results = await UserModel.createUser(null, username, encryptedPassword)
-      if (results) {
-        if (await AuthModel.createVerificationCode(results, uuid())) {
-          const data = {
-            success: true,
-            msg: 'Register Successfully',
-            user: UserDetail
-          }
-          res.send(data)
-        } else {
-          const data = {
-            success: false,
-            msg: 'Verification code couldn\'t be generated'
-          }
-          res.send(data)
-        }
-      } else {
-        const data = {
-          success: false,
-          msg: 'Register Failed'
-        }
-        res.send(data)
-      }
-    }
-  },
-  verify: async function (req, res) {
-    const { user, code } = req.query
-    if (await AuthModel.verifyUser(user, code)) {
-      const data = {
-        success: true,
-        msg: 'User verified successfully'
-      }
-      res.send(data)
-    } else {
-      const data = {
-        success: false,
-        msg: 'Failed to verify user'
-      }
-      res.send(data)
-    }
-  },
-  forgotPassword: async function (req, res) {
+  forgetPass: async function (req, res) {
     const { username } = req.body
-    const { change } = req.query
-    if (!change) {
+    const { code } = req.query
+    console.log(code)
+    if (!code) {
       const user = await AuthModel.checkUsername(username)
       if (user) {
         const info = await AuthModel.getUserByUsername(username)
         const generate = await AuthModel.createVerificationCode(info.id, uuid())
+        const code = await AuthModel.getVerificationCode(username)
         if (generate) {
           const data = {
             success: true,
-            msg: 'Verification code has been sent to Email'
+            msg: 'Verification code has been sent to email',
+            code
           }
           res.send(data)
         } else {
@@ -136,8 +145,8 @@ module.exports = {
     } else {
       const { password } = req.body
       if (password === req.body.confirm_password) {
-        const encryptedPassword = bcrypt.hashSync(password)
-        if (await AuthModel.forgotPassword(change, encryptedPassword)) {
+        const encrypPass = bcrypt.hashSync(password)
+        if (await AuthModel.forgotPassword(code, encrypPass)) {
           const data = {
             success: true,
             msg: 'Your password has been reset'
@@ -146,14 +155,14 @@ module.exports = {
         } else {
           const data = {
             success: false,
-            msg: 'Failed to reset password'
+            msg: 'failed to reset password'
           }
           res.send(data)
         }
       } else {
         const data = {
           success: false,
-          msg: 'Confirm password doesn\'t match'
+          msg: 'Confirm password not match'
         }
         res.send(data)
       }
