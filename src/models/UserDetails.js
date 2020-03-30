@@ -2,6 +2,7 @@ const db = require('../utils/db')
 
 module.exports = {
   createUserDetail: function (idUser, name, email, phone, balance) {
+    console.log(idUser)
     const table = 'user_details'
     const query = `INSERT INTO ${table} (id_user, name, email, phone, balance) VALUES(${idUser}, '${name}','${email}','${phone}', ${balance})`
     console.log(query)

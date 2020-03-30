@@ -187,13 +187,14 @@ module.exports = {
     }
   },
   updateBus: async function (req, res) {
-    const { idAgent, idBuss, name, size } = req.body
+    const { idBuss } = req.params
+    const { idAgent, name, size } = req.body
     if (req.user.roleId === 1) {
       const infoAgent = await AgentModel.findAgentById(idAgent)
       if (infoAgent) {
         const infoBuss = await BussModel.findBusById(idBuss)
         if (infoBuss) {
-          await BussModel.updateBussAdmin(idBuss, idAgent, name, size)
+          await BussModel.updateBuss(idBuss, idAgent, name, size)
           const info = await BussModel.findBusById(idBuss)
           const data = {
             success: true,
@@ -236,13 +237,13 @@ module.exports = {
     value = sort && Object.values(sort)[0]
     search = (sort && { key, value }) || { key: 'id', value: '' }
     const conditions = { page, perPage: limit, search, sort }
-    if (req.user.roleId !== 1) {
-      const data = {
-        success: false,
-        msg: 'You\'re not allowed to access this feature'
-      }
-      res.send(data)
-    }
+    // if (req.user.roleId !== 1) {
+    //   const data = {
+    //     success: false,
+    //     msg: 'You\'re not allowed to access this feature'
+    //   }
+    //   res.send(data)
+    // }
     const results = await BussModel.getAllBusses(conditions)
     conditions.totalData = await BussModel.getTotalBusses(conditions)
     conditions.totalPage = Math.ceil(conditions.totalData / conditions.perPage)

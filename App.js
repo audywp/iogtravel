@@ -3,10 +3,11 @@ const express = require('express')
 const app = express()
 require('dotenv').config()
 const bodyParser = require('body-parser')
-
+const cors = require('cors')
 // middleware
 app.use(bodyParser.urlencoded({ extended: false })) // for x-www-urlencoded
 app.use(bodyParser.json()) // for json
+app.use(cors('*'))
 
 // import router
 const AuthRouter = require('./src/routes/Auth')

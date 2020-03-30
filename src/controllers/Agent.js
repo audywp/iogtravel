@@ -5,12 +5,12 @@ module.exports = {
   createBus: async function (req, res) {
     const info = req.user
     const info2 = await AgentModel.findAgentByIdUser(info.id)
-    let { nameCar, size } = req.body
+    let { nameCar, busClass, size } = req.body
     nameCar = nameCar || `Car ${info2.name}`
     size = size || 5
     // console.log(info2.id_user)
     if (info.roleId === 2) {
-      await BusModel.CreateBus(info2.id, nameCar, size)
+      await BusModel.CreateBus(info2.id, nameCar, busClass, size)
       const data = {
         success: true,
         msg: `Bus added by ${info2.name}`
@@ -43,13 +43,14 @@ module.exports = {
     }
   },
   updateBusses: async function (req, res) {
-    if (req.user.roleId === 2) {
-      let { idBuss, nameCar, seat } = req.body
+    if (req.user.roleId === 1) {
+      const { idBuss } = req.params
+      let { nameCar, busClass, seat } = req.body
       const pastBus = await BusModel.findBusById(idBuss) // get id buss for change name
       if (pastBus) {
         nameCar = nameCar || pastBus.name
         seat = seat || pastBus.bus_seat
-        await BusModel.updateBuss(idBuss, nameCar, seat)
+        await BusModel.updateBuss(idBuss, nameCar, busClass, seat)
         const newCar = await BusModel.findBusById(idBuss)
         const data = {
           success: true,

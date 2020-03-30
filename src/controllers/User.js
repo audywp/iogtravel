@@ -31,6 +31,7 @@ module.exports = {
     }
   },
   create: async function (req, res) {
+    console.log('a')
     const picture = (req.file && req.file.filename) || null
     const { username, password, roleId } = req.body
     const encryptPass = bcrypt.hashSync(password)
@@ -120,11 +121,29 @@ module.exports = {
     }
   },
   getScheduleForUser: async function (req, res) {
-    const result = await UserModel.getAllSchedules()
+    let { page, limit, search, sort } = req.query
+    page = parseInt(page) || 1
+    limit = parseInt(limit) || 5
+
+    let key = search && Object.keys(search)[0]
+    let value = search && Object.values(search)[0]
+    search = (search && { key, value }) || { key: 'id', value: '' }
+
+    key = sort && Object.keys(sort)[0]
+    value = sort && Object.values(sort)[0]
+    search = (sort && { key, value }) || { key: 'price', value: '' }
+    const conditions = { page, perPage: limit, search, sort }
+    const result = await UserModel.getAllSchedules(conditions)
+    conditions.totalData = await ScheduleModel.getTotalSchedules(conditions)
+    conditions.totalPage = Math.ceil(conditions.totalData / conditions.perPage)
+    delete conditions.search
+    delete conditions.sort
+    delete conditions.limit
     if (result) {
       const data = {
         success: true,
-        result
+        result,
+        pageInfo: conditions
       }
       res.send(data)
     } else {

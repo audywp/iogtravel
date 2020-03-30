@@ -1,8 +1,8 @@
 const db = require('../utils/db')
 module.exports = {
-  CreateBus: function (idAgent, name, busSeat) {
+  CreateBus: function (idAgent, name, busClass, busSeat) {
     const table = 'busses'
-    const query = `INSERT INTO ${table} (id_agent,car_name,bus_seat) VALUES (${idAgent}, '${name}', ${busSeat})`
+    const query = `INSERT INTO ${table} (id_agent,car_name,bus_class,bus_seat) VALUES (${idAgent}, '${name}','${busClass}', ${busSeat})`
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
         if (err) {
@@ -13,10 +13,10 @@ module.exports = {
       })
     })
   },
-  updateBuss: function (id, name, size) {
+  updateBuss: function (id, name, busClass, size) {
     return new Promise(function (resolve, reject) {
       const table = 'busses'
-      const query = `UPDATE ${table} SET car_name='${name}', bus_seat=${size} WHERE id=${id}`
+      const query = `UPDATE ${table} SET car_name='${name}', bus_class='${busClass}', bus_seat=${size} WHERE id=${id}`
       console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {
@@ -76,8 +76,9 @@ module.exports = {
     return new Promise(function (resolve, reject) {
       const sql = `SELECT * FROM ${table}
                   WHERE ${search.key} LIKE '${search.value}%'
-                  ORDER BY ${sort.key} ${sort.value ? 'ASC' : 'DESC'} 
+                  ORDER BY ${sort.key} ${sort.value ? 'DESC' : 'ASC'} 
                    LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
+      console.log(sql)
       db.query(sql, function (err, results, fields) {
         if (err) {
           reject(err)

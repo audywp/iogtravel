@@ -25,7 +25,7 @@ Admin.get('/detail', TokenMid.checkToken, UserdControl.getUserDetailByIdUser)
 // create
 Admin.post('/agent/add', TokenMid.checkToken, AdminControl.createAgent)
 Admin.post('/bus/add', TokenMid.checkToken, AdminControl.createBusAdmin)
-Admin.post('/route/add', TokenMid.checkToken, AdminControl.createRoutes)
+Admin.post('/route/add', AdminControl.createRoutes)
 Admin.post('/schedule/add', TokenMid.checkToken, AdminControl.createSchedules)
 // Admin.post('/schedule/add', )
 
@@ -38,6 +38,6 @@ Admin.delete('/schedule/delete', TokenMid.checkToken, AdminControl.deleteSchedul
 // update
 Admin.patch('/route/update', TokenMid.checkToken, AdminControl.updateRoutes)
 Admin.patch('/agent/update', TokenMid.checkToken, AdminControl.updateAgent)
-Admin.patch('/bus/update', TokenMid.checkToken, AdminControl.updateBus)
+Admin.patch('/bus/update', TokenMid.checkToken, AgenControl.updateBusses)
 Admin.patch('/schedule/update', TokenMid.checkToken, AdminControl.updateSchedule)
 module.exports = Admin

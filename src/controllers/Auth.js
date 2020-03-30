@@ -9,7 +9,8 @@ const uuid = require('uuid').v4
 
 module.exports = {
   register: async function (req, res) {
-    const { username, password, name, phone, email } = req.body
+    console.log('a')
+    const { username, password, name, email, phone } = req.body
     const picture = (req.file && req.file.filename) || null
     const checkUser = await AuthModel.checkUsername(username)
     if (checkUser !== 0) {
@@ -80,7 +81,7 @@ module.exports = {
         if (await AuthModel.checkVerifiedUser) {
           if (await AuthModel.checkActivatedUser) {
             const payload = { id: info.id, username, roleId: info.role_id }
-            const options = { expiresIn: '15m' }
+            const options = { expiresIn: '120m' }
             const key = process.env.APP_KEY
             const token = jwt.sign(payload, key, options)
             const data = {

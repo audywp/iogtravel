@@ -4,6 +4,7 @@ const AuthToken = require('../middleware/Auth')
 const AdminControl = require('../controllers/Admin')
 const UserdControl = require('../controllers/UserDetail')
 const UserControl = require('../controllers/User')
+const AgentControl = require('../controllers/Agent')
 const multer = require('multer')
 const path = require('path')
 const storage = multer.diskStorage({
@@ -36,6 +37,7 @@ function fileCheck (file, callbck) {
 
 function filterPicture (req, res, next) {
   upload(req, res, function (err) {
+    console.log('a')
     if (err) {
       res.send('Error: File too large')
       console.log(err)
@@ -43,7 +45,7 @@ function filterPicture (req, res, next) {
       if (req.file === undefined) {
         res.send('Error: no file selected')
       } else {
-        res.send('File uploaded')
+        next()
       }
     }
   })
@@ -57,7 +59,7 @@ User.post('/register', filterPicture, AuthController.register)
 User.post('/login', AuthController.login)
 User.post('/transaction/add', AuthToken.checkToken, UserControl.Transaction)
 User.get('/detail', AuthToken.checkToken, UserdControl.getUserDetailByIdUser)
-User.get('/schedule', AdminControl.readSchedules)
+User.get('/schedule', UserControl.getScheduleForUser)
 User.get('/transaction', AuthToken.checkToken, UserControl.getTransactionbyUser)
 User.patch('/update', AuthToken.checkToken, UserdControl.updateUserDetail)
 User.patch('/topup', AuthToken.checkToken, UserControl.topUp)

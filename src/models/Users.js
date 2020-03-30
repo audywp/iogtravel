@@ -58,6 +58,7 @@ module.exports = {
     picture = typeof picture === 'string' ? `'${picture}'` : picture
     return new Promise(function (resolve, reject) {
       const query = `INSERT INTO ${table} (picture, username, password, role_id) VALUES (${picture}, '${username}', '${password}', ${roleId})`
+      console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
@@ -121,11 +122,18 @@ module.exports = {
       })
     })
   },
-  getAllSchedules: function () {
+  getAllSchedules: function (conditions = {}) {
+    let { page, perPage, sort, search } = conditions
+    page = page || 1
+    perPage = perPage || 5
+    sort = sort || { key: 'id', value: 1 } // value => 0 untuk descending, 1 ascending
+    search = search || { key: 'name', value: '' }
     const query = `SELECT schedules.id, busses.car_name, busses.bus_seat, routes.start, routes.end, schedules.price, schedules.departure_time, schedules.arrive_time, schedules.departure_date
                   FROM ((schedules
                   INNER JOIN routes ON schedules.id_route = routes.id)
-                  INNER JOIN busses ON schedules.id_bus = busses.id) ORDER BY schedules.id ASC`
+                  INNER JOIN busses ON schedules.id_bus = busses.id)  WHERE ${search.key} LIKE '${search.value}%'
+                  ORDER BY ${sort.key} ${sort.value ? 'ASC' : 'DESC'} 
+                   LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
         if (err) {
