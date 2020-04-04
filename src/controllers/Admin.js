@@ -33,7 +33,7 @@ module.exports = {
     res.send(data)
   },
   deleteAgent: async function (req, res) {
-    const { idAgent } = req.body
+    const { idAgent } = req.params
     if (idAgent) {
       if (req.user.roleId === 1) {
         if (await AgentModel.deleteAgentById(idAgent)) {
@@ -159,11 +159,12 @@ module.exports = {
     }
   },
   createBusAdmin: async function (req, res) {
-    const { idUser, nameBuss, busSeat } = req.body
+    const { idUser } = req.params
     if (req.user.roleId === 1) {
       const agent = await AgentModel.findAgentByIdUser(idUser)
       if (agent) { // check if id is agent or not
-        await BussModel.CreateBus(agent.id, nameBuss, busSeat)
+        const { nameBuss, busClass, busSeat } = req.body
+        await BussModel.CreateBus(agent.id, nameBuss, busClass, busSeat)
         const data = {
           success: true,
           msg: `Car ${nameBuss} created with id agent ${agent.id}`
@@ -403,7 +404,7 @@ module.exports = {
     }
   },
   deleteRoutes: function (req, res) {
-    const { idRoute } = req.body
+    const { idRoute } = req.params
     if (req.user.roleId === 1) {
       if (!RouteModel.deleteRoute(idRoute)) {
         const data = {

@@ -9,7 +9,7 @@ Agent.get('/detail', AuthToken.checkToken, UserdControl.getUserDetailByIdUser)
 Agent.patch('/update', AuthToken.checkToken, UserdControl.updateUserDetail)
 Agent.post('/bus/add', AuthToken.checkToken, AgenControl.createBus)
 Agent.get('/bus', AuthToken.checkToken, AgenControl.getBusses)
-Agent.patch('/bus/update', AuthToken.checkToken, AgenControl.updateBusses)
-Agent.delete('/bus/delete', AuthToken.checkToken, AgenControl.deleteBuss)
-
+Agent.patch('/bus/update/:id', AuthToken.checkToken, AgenControl.updateBusses)
+Agent.delete('/bus/delete/:idBuss', AuthToken.checkToken, AgenControl.deleteBuss)
+Agent.get('/bus/:id')
 module.exports = Agent

@@ -9,7 +9,7 @@ module.exports = {
     nameCar = nameCar || `Car ${info2.name}`
     size = size || 5
     // console.log(info2.id_user)
-    if (info.roleId === 2) {
+    if (info.roleId === 2 || info.roleId === 1) {
       await BusModel.CreateBus(info2.id, nameCar, busClass, size)
       const data = {
         success: true,
@@ -26,9 +26,8 @@ module.exports = {
     }
   },
   getBusses: async function (req, res) {
-    if (req.user.roleId === 2) {
-      const info = await AgentModel.findAgentByIdUser(req.user.id) // get id agent by user_id
-      const bus = await BusModel.findBusByAgent(info.id)
+    if (req.user.roleId === 1) {
+      const bus = await BusModel.findBusByAgent()
       const data = {
         success: true,
         bus
@@ -44,14 +43,14 @@ module.exports = {
   },
   updateBusses: async function (req, res) {
     if (req.user.roleId === 1) {
-      const { idBuss } = req.params
+      const { id } = req.params
       let { nameCar, busClass, seat } = req.body
-      const pastBus = await BusModel.findBusById(idBuss) // get id buss for change name
+      const pastBus = await BusModel.findBusById(id) // get id buss for change name
       if (pastBus) {
         nameCar = nameCar || pastBus.name
         seat = seat || pastBus.bus_seat
-        await BusModel.updateBuss(idBuss, nameCar, busClass, seat)
-        const newCar = await BusModel.findBusById(idBuss)
+        await BusModel.updateBuss(id, nameCar, busClass, seat)
+        const newCar = await BusModel.findBusById(id)
         const data = {
           success: true,
           msg: 'Car has been updated',
@@ -74,7 +73,7 @@ module.exports = {
     }
   },
   deleteBuss: async function (req, res) {
-    const { idBuss } = req.body
+    const { idBuss } = req.params
     if (req.user.roleId === 2 || req.user.roleId === 1) {
       const bus = await BusModel.deleteBuss(idBuss)
       if (bus) {

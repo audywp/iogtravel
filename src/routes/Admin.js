@@ -24,15 +24,15 @@ Admin.get('/detail', TokenMid.checkToken, UserdControl.getUserDetailByIdUser)
 
 // create
 Admin.post('/agent/add', TokenMid.checkToken, AdminControl.createAgent)
-Admin.post('/bus/add', TokenMid.checkToken, AdminControl.createBusAdmin)
+Admin.post('/bus/add/:idUser', TokenMid.checkToken, AdminControl.createBusAdmin)
 Admin.post('/route/add', AdminControl.createRoutes)
 Admin.post('/schedule/add', TokenMid.checkToken, AdminControl.createSchedules)
 // Admin.post('/schedule/add', )
 
 // delete
-Admin.delete('/route/delete', TokenMid.checkToken, AdminControl.deleteRoutes)
+Admin.delete('/route/delete/:idRoute', TokenMid.checkToken, AdminControl.deleteRoutes)
 Admin.delete('/agent/delete', TokenMid.checkToken, AdminControl.deleteAgent)
-Admin.delete('/bus/delete', TokenMid.checkToken, AgenControl.deleteBuss)
+Admin.delete('/bus/delete/:id', TokenMid.checkToken, AgenControl.deleteBuss)
 Admin.delete('/schedule/delete', TokenMid.checkToken, AdminControl.deleteSchedule)
 
 // update

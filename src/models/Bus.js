@@ -1,8 +1,9 @@
 const db = require('../utils/db')
 module.exports = {
-  CreateBus: function (idAgent, name, busClass, busSeat) {
+  CreateBus: function (idAgent, nameBuss, busClass, busSeat) {
+    console.log(idAgent, busSeat, busClass, nameBuss)
     const table = 'busses'
-    const query = `INSERT INTO ${table} (id_agent,car_name,bus_class,bus_seat) VALUES (${idAgent}, '${name}','${busClass}', ${busSeat})`
+    const query = `INSERT INTO ${table} (id_agent,car_name,bus_class,bus_seat) VALUES (${idAgent}, '${nameBuss}','${busClass}', ${busSeat})`
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
         if (err) {
@@ -49,10 +50,10 @@ module.exports = {
       })
     })
   },
-  deleteBuss: function (id) {
+  deleteBuss: function (idBuss) {
     return new Promise(function (resolve, reject) {
       const table = 'busses'
-      const query = `DELETE FROM ${table} WHERE id=${id}`
+      const query = `DELETE FROM ${table} WHERE id=${idBuss}`
       db.query(query, function (err, results, fields) {
         if (err) {
           reject(err)
@@ -106,7 +107,7 @@ module.exports = {
   },
   findBusByAgent: function (id) {
     const table = 'busses'
-    const query = `SELECT * FROM ${table} WHERE id_agent=${id}`
+    const query = `SELECT * FROM ${table}`
     console.log(query)
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
