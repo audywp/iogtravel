@@ -123,7 +123,7 @@ module.exports = {
     res.send(data)
   },
   createAgent: async function (req, res) {
-    const { idUser } = req.body
+    const { idUser } = req.params
     if (req.user.roleId === 1) {
       if (!(idUser)) {
         const data = {
@@ -386,10 +386,11 @@ module.exports = {
   },
   createRoutes: function (req, res) {
     const { start, end } = req.body
-    const idUser = req.user.id
+    const { idUser } = req.params
     // console.log(req.user.roleId)
-    if (req.user.roleId === 1) {
+    if (req.user.roleId === 1 || req.user.roleId === 2) {
       RouteModel.createRoute(idUser, start, end)
+      console.log(idUser, start, end)
       const data = {
         success: true,
         msg: `Route has been created by ${req.user.username}`
@@ -430,7 +431,8 @@ module.exports = {
   updateRoutes: async function (req, res) {
     if (req.user.roleId === 1) {
       // console.log(req.user)
-      let { idRoute, start, end } = req.body
+      let { start, end } = req.body
+      const { idRoute } = req.params
       const info = await RouteModel.getRouteById(idRoute)
       console.log(info)
       start = start || info.start
@@ -501,7 +503,8 @@ module.exports = {
   },
   createSchedules: async function (req, res) {
     if (req.user.roleId === 1) {
-      let { idBus, idRoute, price, departureTime, arriveTime, departureDate } = req.body
+      let { price, departureTime, arriveTime, departureDate } = req.body
+      const { idBus, idRoute } = req.params
       const infoBus = await BussModel.findBusById(idBus)
       const infoRoute = await RouteModel.getRouteById(idRoute)
       // Define price on your own definition by route
@@ -611,7 +614,7 @@ module.exports = {
   },
   deleteSchedule: async function (req, res) {
     if (req.user.roleId === 1) {
-      const { idSchedule } = req.body
+      const { idSchedule } = req.params
       const checkSchedule = await ScheduleModel.getScheduleById(idSchedule)
       console.log(checkSchedule)
       if (checkSchedule) {

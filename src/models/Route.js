@@ -41,6 +41,7 @@ module.exports = {
   createRoute: function (idUser, start, end) {
     const table = 'routes'
     const sql = `INSERT INTO ${table} (id_user, start, end) VALUES (${idUser}, '${start}', '${end}')`
+    console.log(sql)
     return new Promise(function (resolve, reject) {
       db.query(sql, function (err, results, fields) {
         if (err) {

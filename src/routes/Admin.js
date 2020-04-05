@@ -23,20 +23,20 @@ Admin.get('/transaction', TokenMid.checkToken, AdminControl.readTransaction)
 Admin.get('/detail', TokenMid.checkToken, UserdControl.getUserDetailByIdUser)
 
 // create
-Admin.post('/agent/add', TokenMid.checkToken, AdminControl.createAgent)
+Admin.post('/agent/add/:idUser', TokenMid.checkToken, AdminControl.createAgent)
 Admin.post('/bus/add/:idUser', TokenMid.checkToken, AdminControl.createBusAdmin)
-Admin.post('/route/add', AdminControl.createRoutes)
-Admin.post('/schedule/add', TokenMid.checkToken, AdminControl.createSchedules)
+Admin.post('/route/add/:idUser', TokenMid.checkToken, AdminControl.createRoutes)
+Admin.post('/schedule/add/:idBus/:idRoute', TokenMid.checkToken, AdminControl.createSchedules)
 // Admin.post('/schedule/add', )
 
 // delete
 Admin.delete('/route/delete/:idRoute', TokenMid.checkToken, AdminControl.deleteRoutes)
-Admin.delete('/agent/delete', TokenMid.checkToken, AdminControl.deleteAgent)
+Admin.delete('/agent/delete/:idAgent', TokenMid.checkToken, AdminControl.deleteAgent)
 Admin.delete('/bus/delete/:id', TokenMid.checkToken, AgenControl.deleteBuss)
-Admin.delete('/schedule/delete', TokenMid.checkToken, AdminControl.deleteSchedule)
+Admin.delete('/schedule/delete/:idSchedule', TokenMid.checkToken, AdminControl.deleteSchedule)
 
 // update
-Admin.patch('/route/update', TokenMid.checkToken, AdminControl.updateRoutes)
+Admin.patch('/route/update/:idRoute', TokenMid.checkToken, AdminControl.updateRoutes)
 Admin.patch('/agent/update', TokenMid.checkToken, AdminControl.updateAgent)
 Admin.patch('/bus/update', TokenMid.checkToken, AgenControl.updateBusses)
 Admin.patch('/schedule/update', TokenMid.checkToken, AdminControl.updateSchedule)
