@@ -298,19 +298,19 @@ module.exports = {
 
     let key = search && Object.keys(search)[0]
     let value = search && Object.values(search)[0]
-    search = (search && { key, value }) || { key: 'id', value: '' }
+    search = (search && { key, value }) || { key: 'start', value: '' }
 
     key = sort && Object.keys(sort)[0]
     value = sort && Object.values(sort)[0]
     search = (sort && { key, value }) || { key: 'id', value: '' }
     const conditions = { page, perPage: limit, search, sort }
-    if (req.user.roleId !== 1) {
-      const data = {
-        success: false,
-        msg: 'You\'re not allowed to access this feature'
-      }
-      res.send(data)
-    }
+    // if (req.user.roleId !== 1) {
+    //   const data = {
+    //     success: false,
+    //     msg: 'You\'re not allowed to access this feature'
+    //   }
+    //   res.send(data)
+    // }
     const results = await RouteModel.getAllRoutes(conditions)
     conditions.totalData = await RouteModel.getTotalRoutes(conditions)
     conditions.totalPage = Math.ceil(conditions.totalData / conditions.perPage)

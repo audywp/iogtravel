@@ -38,6 +38,6 @@ app.get('/migrate', function (req, res) {
 // port
 const port = process.env.PORT
 
-app.listen(port, function () {
+app.listen(port, '0.0.0.0', function () {
   console.log(`listening on port ${port}`)
 })

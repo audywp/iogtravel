@@ -52,12 +52,12 @@ module.exports = {
       })
     })
   },
-  createUser: function (picture, username, password, roleId) {
+  createUser: function (username, password, roleId) {
     const table = 'users'
     roleId = roleId || 3
-    picture = typeof picture === 'string' ? `'${picture}'` : picture
+    // picture = typeof picture === 'string' ? `'${picture}'` : picture
     return new Promise(function (resolve, reject) {
-      const query = `INSERT INTO ${table} (picture, username, password, role_id) VALUES (${picture}, '${username}', '${password}', ${roleId})`
+      const query = `INSERT INTO ${table} ( username, password, role_id) VALUES ( '${username}', '${password}', ${roleId})`
       console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {
