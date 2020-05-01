@@ -10,7 +10,7 @@ module.exports = {
     return new Promise(function (resolve, reject) {
       const query = `SELECT * FROM ${table}
                     WHERE ${search.key} LIKE '${search.value}%'
-                    ORDER BY ${sort.key} ${sort.value ? 'ASC' : 'DESC'} 
+                    ORDER BY ${sort.key} ${sort.value ? 'DESC' : 'ASC'} 
                     LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
       db.query(query, function (err, results, fields) {
         if (err) {
@@ -52,12 +52,12 @@ module.exports = {
       })
     })
   },
-  createUser: function (username, password, roleId) {
+  createUser: function (picture, username, password, roleId) {
     const table = 'users'
     roleId = roleId || 3
     // picture = typeof picture === 'string' ? `'${picture}'` : picture
     return new Promise(function (resolve, reject) {
-      const query = `INSERT INTO ${table} ( username, password, role_id) VALUES ( '${username}', '${password}', ${roleId})`
+      const query = `INSERT INTO ${table} (picture, username, password, role_id) VALUES ( '${picture}', '${username}', '${password}', ${roleId})`
       console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {

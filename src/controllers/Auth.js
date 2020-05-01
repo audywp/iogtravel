@@ -11,7 +11,8 @@ module.exports = {
   register: async function (req, res) {
     console.log('a')
     const { username, password, name, email, phone } = req.body
-    // const picture = (req.file && req.file.filename) || null
+    const picture = (req.file && req.file.filename) || null
+    console.log(req.file)
     const checkUser = await AuthModel.checkUsername(username)
     if (checkUser !== 0) {
       const data = {
@@ -21,7 +22,7 @@ module.exports = {
       res.send(data)
     } else {
       const encrypPass = bcrypt.hashSync(password)
-      const results = await UserModel.createUser(username, encrypPass)
+      const results = await UserModel.createUser(picture, username, encrypPass)
       const info = await AuthModel.getUserByUsername(username)
       await UserdModel.createUserDetail(info.id, name, email, phone, 0)
       if (results) {

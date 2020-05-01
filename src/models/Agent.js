@@ -6,10 +6,11 @@ module.exports = {
     console.log(query)
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
+        console.log(results)
         if (err) {
           reject(err)
         } else {
-          resolve(results.insertId)
+          resolve(results)
         }
       })
     })
@@ -131,10 +132,10 @@ module.exports = {
       })
     })
   },
-  findAgentByIdUser: function (id) {
+  findAgentByName: function (name) {
     const table = 'agents'
     return new Promise(function (resolve, reject) {
-      const query = `SELECT * FROM ${table} WHERE id_user=${id}`
+      const query = `SELECT * FROM ${table} WHERE name='${name}'`
       console.log(query)
       db.query(query, function (err, results, fields) {
         if (err) {

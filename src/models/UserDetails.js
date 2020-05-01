@@ -104,7 +104,7 @@ module.exports = {
           if (results.affectedRows) {
             resolve(true)
           } else {
-            resolve(false)
+            resolve(err)
           }
         }
       })

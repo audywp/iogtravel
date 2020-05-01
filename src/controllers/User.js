@@ -156,6 +156,7 @@ module.exports = {
   },
   topUp: async function (req, res) {
     const { balance } = req.body
+    console.log(req.user)
     if (balance) {
       await UserdModel.topUp(req.user.id, balance)
       const result = await UserdModel.getUserDetailByIdUser(req.user.id)

@@ -123,33 +123,15 @@ module.exports = {
     res.send(data)
   },
   createAgent: async function (req, res) {
-    const { idUser } = req.params
-    if (req.user.roleId === 1) {
-      if (!(idUser)) {
-        const data = {
-          success: false,
-          msg: 'Enter the id user'
-        }
-        res.send(data)
-      } else {
-        const info = await UserModel.getUserById(idUser)
-        const name = `${info.username} agent`
-        if (info) {
-          await AdminModel.createAgent(idUser)
-          await AgentModel.createAgent(idUser, name)
-          const data = {
-            success: true,
-            msg: `${idUser} has been an agent`
-          }
-          res.send(data)
-        } else {
-          const data = {
-            success: false,
-            msg: 'Id user not found'
-          }
-          res.send(data)
-        }
+    const { id, roleId } = req.user
+    const { name } = req.body
+    if (roleId === 1) {
+      await AgentModel.createAgent(id, name)
+      const data = {
+        success: false,
+        msg: 'Success create Agents'
       }
+      res.send(data)
     } else {
       const data = {
         success: false,
@@ -159,9 +141,9 @@ module.exports = {
     }
   },
   createBusAdmin: async function (req, res) {
-    const { idUser } = req.params
-    if (req.user.roleId === 1) {
-      const agent = await AgentModel.findAgentByIdUser(idUser)
+    if (req.user.roleId !== 3) {
+      const { name } = req.body
+      const agent = await AgentModel.findAgentByName(name)
       if (agent) { // check if id is agent or not
         const { nameBuss, busClass, busSeat } = req.body
         await BussModel.CreateBus(agent.id, nameBuss, busClass, busSeat)

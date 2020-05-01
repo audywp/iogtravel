@@ -23,8 +23,8 @@ Admin.get('/transaction', TokenMid.checkToken, AdminControl.readTransaction)
 Admin.get('/detail', TokenMid.checkToken, UserdControl.getUserDetailByIdUser)
 
 // create
-Admin.post('/agent/add/:idUser', TokenMid.checkToken, AdminControl.createAgent)
-Admin.post('/bus/add/:idUser', TokenMid.checkToken, AdminControl.createBusAdmin)
+Admin.post('/agent/add/', TokenMid.checkToken, AdminControl.createAgent)
+Admin.post('/bus/add/', TokenMid.checkToken, AdminControl.createBusAdmin)
 Admin.post('/route/add/:idUser', TokenMid.checkToken, AdminControl.createRoutes)
 Admin.post('/schedule/add/:idBus/:idRoute', TokenMid.checkToken, AdminControl.createSchedules)
 // Admin.post('/schedule/add', )

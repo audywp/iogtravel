@@ -14,45 +14,6 @@ const storage = multer.diskStorage({
   }
 })
 
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 1000000000 },
-  fileFilter: function (req, file, callbck) {
-    fileCheck(file, callbck)
-  }
-}).single('picture')
-
-// function fileCheck (file, callbck) {
-//   const typeFile = /jpeg|jpg|png|gif/
-//   const extName = typeFile.test(path.extname(file.originalname).toLowerCase())
-//   console.log(extName)
-//   const mimetype = typeFile.test(file.mimetype)
-//   console.log(mimetype)
-//   if (mimetype && extName) {
-//     return callbck(null, true)
-//   } else {
-//     return callbck(null, false)
-//   }
-// }
-
-// function filterPicture (req, res, next) {
-//   upload(req, res, function (err) {
-//     console.log('a')
-//     if (err) {
-//       res.send('Error: File too large')
-//       console.log(err)
-//     } else {
-//       if (req.file === undefined) {
-//         res.send('Error: no file selected')
-//       } else {
-//         next()
-//       }
-//     }
-//   })
-// }
-
-// User.post('/upload', filterPicture)
-
 User.patch('/update', AuthToken.checkToken, UserControl.update)
 User.post('/register', AuthController.register)
 
