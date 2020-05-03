@@ -123,15 +123,23 @@ module.exports = {
     res.send(data)
   },
   createAgent: async function (req, res) {
-    const { id, roleId } = req.user
-    const { name } = req.body
-    if (roleId === 1) {
-      await AgentModel.createAgent(id, name)
-      const data = {
-        success: false,
-        msg: 'Success create Agents'
+    const { roleId } = req.user
+    if (roleId === 1 || roleId === 2) {
+      const { name } = req.body
+      const User = await AgentModel.createAgent(name)
+      if (User) {
+        const data = {
+          success: true,
+          msg: 'Success create Agents'
+        }
+        res.send(data)
+      } else {
+        const data = {
+          success: false,
+          msg: 'failed create Agents'
+        }
+        res.send(data)
       }
-      res.send(data)
     } else {
       const data = {
         success: false,
@@ -485,12 +493,14 @@ module.exports = {
   },
   createSchedules: async function (req, res) {
     if (req.user.roleId === 1) {
-      let { price, departureTime, arriveTime, departureDate } = req.body
-      const { idBus, idRoute } = req.params
-      const infoBus = await BussModel.findBusById(idBus)
-      const infoRoute = await RouteModel.getRouteById(idRoute)
+      let { nameAgent, start, end, classBus, price, departureTime, arriveTime, departureDate } = req.body
+      const infoBus = await BussModel.findBusIdClass(nameAgent, classBus)
+      console.log(infoBus.id)
+      const infoRoute = await RouteModel.getRouteIdByRoute(start, end)
+      console.log(infoRoute.id)
+      const idAgent = await AgentModel.findAgentByName(nameAgent)
       // Define price on your own definition by route
-      switch (infoRoute.id) {
+      switch (infoRoute) {
         case 1:
           price = price || 100000
           break
@@ -504,7 +514,7 @@ module.exports = {
           price = price || 150000
       }
       if (infoBus && infoRoute) {
-        const results = await ScheduleModel.createSchedule(req.user.id, idBus, idRoute, price, departureTime, arriveTime, departureDate)
+        const results = await ScheduleModel.createSchedule(idAgent.id, infoBus.id, infoRoute.id, price, departureTime, arriveTime, departureDate)
         if (results) {
           const data = {
             success: true,

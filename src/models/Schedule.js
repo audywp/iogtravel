@@ -4,7 +4,7 @@ module.exports = {
   createSchedule: function (idUser, idBus, idRoute, price, departureTime, arriveTime, departureDate) {
     const table = 'schedules'
     const query = `INSERT INTO ${table} (id_admin, id_bus, id_route, price, departure_time, arrive_time, departure_date)
-    VALUES (${idUser}, ${idBus},${idRoute}, ${price},'${departureTime}', '${arriveTime}', '${departureDate}')`
+    VALUES (${idUser}, ${idBus},${idRoute}, ${price},'${departureTime}', '${arriveTime}', '${departureDate.slice(0, 20)}')`
     console.log(query)
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
@@ -56,7 +56,7 @@ module.exports = {
     page = page || 1
     perPage = perPage || 5
     sort = sort || { key: 'id', value: 1 } // value => 0 untuk descending, 1 ascending
-    search = search || { key: 'name', value: '' }
+    search = search || { key: '', value: '' }
     const table = 'schedules'
     return new Promise(function (resolve, reject) {
       const sql = `SELECT * FROM ${table}

@@ -6,6 +6,46 @@ const TokenMid = require('../middleware/Auth')
 const AuthControl = require('../controllers/Auth')
 const UserdControl = require('../controllers/UserDetail')
 const AgenControl = require('../controllers/Agent')
+const multer = require('multer')
+const path = require('path')
+const storage = multer.diskStorage({
+  destination: 'files/',
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`)
+  }
+})
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 4194304 },
+  fileFilter: function (req, file, cb) {
+    const extensions = path.extname(file.originalname)
+    if (extensions !== '.png' && extensions !== '.jpg' && extensions !== '.jpeg') {
+      return cb(new Error())
+    } else {
+      cb(null, true)
+    }
+  }
+}).single('picture')
+
+const uploadImage = (req, res, next) => {
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      const data = {
+        upload: false,
+        msg: 'File to Large'
+      }
+      res.send(data)
+    } else if (err instanceof Error) {
+      const data = {
+        upload: false,
+        msg: 'Only image are allowed'
+      }
+      res.send(data)
+    } else {
+      next()
+    }
+  })
+}
 
 Admin.post('/create', AdminControl.createAdmin)
 Admin.post('/login', AuthControl.login)
@@ -23,10 +63,10 @@ Admin.get('/transaction', TokenMid.checkToken, AdminControl.readTransaction)
 Admin.get('/detail', TokenMid.checkToken, UserdControl.getUserDetailByIdUser)
 
 // create
-Admin.post('/agent/add/', TokenMid.checkToken, AdminControl.createAgent)
+Admin.post('/agent/add/', uploadImage, TokenMid.checkToken, AdminControl.createAgent)
 Admin.post('/bus/add/', TokenMid.checkToken, AdminControl.createBusAdmin)
 Admin.post('/route/add/:idUser', TokenMid.checkToken, AdminControl.createRoutes)
-Admin.post('/schedule/add/:idBus/:idRoute', TokenMid.checkToken, AdminControl.createSchedules)
+Admin.post('/schedule/add/', TokenMid.checkToken, AdminControl.createSchedules)
 // Admin.post('/schedule/add', )
 
 // delete

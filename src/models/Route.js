@@ -121,5 +121,20 @@ module.exports = {
         }
       })
     })
+  },
+  getRouteIdByRoute: (start, end) => {
+    const table = 'routes'
+    const sql = `SELECT * FROM ${table} WHERE start='${start}' AND end='${end}'`
+    console.log(sql)
+    return new Promise((resolve, reject) => {
+      db.query(sql, (err, results, fields) => {
+        console.log(results)
+        if (err) {
+          reject(err)
+        } else {
+          resolve(results[0])
+        }
+      })
+    })
   }
 }

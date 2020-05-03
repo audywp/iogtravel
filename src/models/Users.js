@@ -128,7 +128,7 @@ module.exports = {
     perPage = perPage || 5
     sort = sort || { key: 'id', value: 1 } // value => 0 untuk descending, 1 ascending
     search = search || { key: 'name', value: '' }
-    const query = `SELECT schedules.id, busses.car_name, busses.bus_seat, routes.start, routes.end, schedules.price, schedules.departure_time, schedules.arrive_time, schedules.departure_date
+    const query = `SELECT schedules.id, busses.car_name, busses.bus_seat, busses.bus_class, routes.start, routes.end, schedules.price, schedules.departure_time, schedules.arrive_time, schedules.departure_date
                   FROM ((schedules
                   INNER JOIN routes ON schedules.id_route = routes.id)
                   INNER JOIN busses ON schedules.id_bus = busses.id)  WHERE ${search.key} LIKE '${search.value}%'

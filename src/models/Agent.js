@@ -1,8 +1,9 @@
 const db = require('../utils/db')
 var table = 'agents'
 module.exports = {
-  createAgent: function (id, name) {
-    const query = `INSERT INTO ${table} (id_user,name) VALUES (${id}, '${name}')`
+  createAgent: function ( name) {
+    const query = `INSERT INTO ${table} (name)
+    VALUES ('${name}')`
     console.log(query)
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {

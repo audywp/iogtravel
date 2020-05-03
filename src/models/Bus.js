@@ -154,5 +154,18 @@ module.exports = {
         }
       })
     })
+  },
+  findBusIdClass: (nameAgent, classBus) => {
+    const table = 'busses'
+    const query = `SELECT * FROM ${table} where car_name='${nameAgent}' AND bus_class='${classBus}'`
+    return new Promise ((resolve, reject) => {
+      db.query(query, (err, results, fields) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(results[0])
+        }
+      })
+    })
   }
 }

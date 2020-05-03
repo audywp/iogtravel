@@ -4,26 +4,13 @@ const AgentModel = require('../models/Agent')
 module.exports = {
   createBus: async function (req, res) {
     const info = req.user
-    const info2 = await AgentModel.findAgentByIdUser(info.id)
+    const { name } = req.body
+    const info2 = await AgentModel.findAgentByName(name)
+    console.log(info2.id)
     let { nameCar, busClass, size } = req.body
-    nameCar = nameCar || `Car ${info2.name}`
-    size = size || 5
-    // console.log(info2.id_user)
-    if (info.roleId === 2 || info.roleId === 1) {
-      await BusModel.CreateBus(info2.id, nameCar, busClass, size)
-      const data = {
-        success: true,
-        msg: `Bus added by ${info2.name}`
-      }
-      res.send(data)
-    } else {
-      const data = {
-        success: true,
-        msg: 'You cannot access this feature',
-        value: info2
-      }
-      res.send(data)
-    }
+    // if (info2) {
+    //   const bus = await BusModel.CreateBus()
+    // }
   },
   getBusses: async function (req, res) {
     if (req.user.roleId === 1) {
