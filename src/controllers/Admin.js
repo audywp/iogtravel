@@ -493,14 +493,15 @@ module.exports = {
   },
   createSchedules: async function (req, res) {
     if (req.user.roleId === 1) {
-      let { nameAgent, start, end, classBus, price, departureTime, arriveTime, departureDate } = req.body
+      const { idRoute } = req.params
+      console.log(idRoute)
+      let { nameAgent, classBus, price, departureTime, arriveTime, departureDate } = req.body
       const infoBus = await BussModel.findBusIdClass(nameAgent, classBus)
       console.log(infoBus.id)
-      const infoRoute = await RouteModel.getRouteIdByRoute(start, end)
-      console.log(infoRoute.id)
       const idAgent = await AgentModel.findAgentByName(nameAgent)
+      console.log(idAgent.id)
       // Define price on your own definition by route
-      switch (infoRoute) {
+      switch (idRoute) {
         case 1:
           price = price || 100000
           break
@@ -513,8 +514,9 @@ module.exports = {
         default:
           price = price || 150000
       }
-      if (infoBus && infoRoute) {
-        const results = await ScheduleModel.createSchedule(idAgent.id, infoBus.id, infoRoute.id, price, departureTime, arriveTime, departureDate)
+      if (infoBus && idAgent) {
+        const results = await ScheduleModel.createSchedule(idAgent.id, infoBus.id, idRoute, price, departureTime, arriveTime, departureDate)
+        console.log(results)
         if (results) {
           const data = {
             success: true,
@@ -531,7 +533,7 @@ module.exports = {
       } else {
         const data = {
           success: false,
-          msg: `id Bus ${idBus} / id route ${idRoute} not found`
+          msg: `id Bus  / id route ${idRoute} not found`
         }
         res.send(data)
       }
@@ -610,7 +612,7 @@ module.exports = {
       const checkSchedule = await ScheduleModel.getScheduleById(idSchedule)
       console.log(checkSchedule)
       if (checkSchedule) {
-        const deleteSchedule = ScheduleModel.deleteSchedule(idSchedule, req.user.id)
+        const deleteSchedule = ScheduleModel.deleteSchedule(idSchedule)
         if (deleteSchedule) {
           const data = {
             success: true,
@@ -635,6 +637,43 @@ module.exports = {
       const data = {
         success: false,
         msg: 'U cant access this feature'
+      }
+      res.send(data)
+    }
+  },
+  getEndRoute : async (req, res) => {
+    const { start } = req.body
+    const results = await AdminModel.getEndRoute(start)
+    if (results) {
+      const data = {
+        success: true,
+        msg: 'success',
+        results
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg: 'false'
+      }
+      res.send(data)
+    }
+  },
+  updateScheduleByAdmin : async (req, res) => {
+    const { idSchedule } = req.params
+    const { date } =req.body
+    const results = await AdminModel.updateScheduleByAdmin(idSchedule, date)
+    if (results) {
+      const data= {
+        success: true,
+        msg: 'success',
+        results
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg: 'false'
       }
       res.send(data)
     }

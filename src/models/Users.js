@@ -127,15 +127,19 @@ module.exports = {
     page = page || 1
     perPage = perPage || 5
     sort = sort || { key: 'id', value: 1 } // value => 0 untuk descending, 1 ascending
-    search = search || { key: 'name', value: '' }
+    console.log('ini sort', parseInt(sort.value))
+    search = search || { key: 'start', value: '' }
+    console.log('search',search)
     const query = `SELECT schedules.id, busses.car_name, busses.bus_seat, busses.bus_class, routes.start, routes.end, schedules.price, schedules.departure_time, schedules.arrive_time, schedules.departure_date
                   FROM ((schedules
                   INNER JOIN routes ON schedules.id_route = routes.id)
-                  INNER JOIN busses ON schedules.id_bus = busses.id)  WHERE ${search.key} LIKE '${search.value}%'
-                  ORDER BY ${sort.key} ${sort.value ? 'ASC' : 'DESC'} 
-                   LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
+                  INNER JOIN busses ON schedules.id_bus = busses.id)  WHERE ${search.key} LIKE '%${search.value}%'
+                  ORDER BY ${sort.key} ${parseInt(sort.value) ? 'DESC' : 'ASC'} 
+                  LIMIT ${perPage} OFFSET ${(page - 1) * perPage}`
+                   console.log(query)
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
+        console.log('res', results)
         if (err) {
           reject(err)
         } else {
@@ -154,6 +158,24 @@ module.exports = {
           reject(err)
         } else {
           resolve(results.insertId)
+        }
+      })
+    })
+  },
+  uploadImage: function (id, picture) {
+    const table = 'users'
+    return new Promise(function (resolve, reject) {
+      const query = `UPDATE ${table} SET picture='${picture}' WHERE id=${id}`
+      console.log(query)
+      db.query(query, function (err, results, fields) {
+        if (err) {
+          reject(err)
+        } else {
+          if (results.affectedRows) {
+            resolve(results.affectedRows)
+          } else {
+            resolve(false)
+          }
         }
       })
     })

@@ -122,20 +122,20 @@ module.exports = {
   },
   getScheduleForUser: async function (req, res) {
     let { page, limit, search, sort } = req.query
+    console.log(search)
     page = parseInt(page) || 1
     limit = parseInt(limit) || 5
 
     let key = search && Object.keys(search)[0]
     let value = search && Object.values(search)[0]
-    search = (search && { key, value }) || { key: 'id', value: '' }
-
     key = sort && Object.keys(sort)[0]
     value = sort && Object.values(sort)[0]
-    search = (sort && { key, value }) || { key: 'price', value: '' }
     const conditions = { page, perPage: limit, search, sort }
     const result = await UserModel.getAllSchedules(conditions)
     conditions.totalData = await ScheduleModel.getTotalSchedules(conditions)
     conditions.totalPage = Math.ceil(conditions.totalData / conditions.perPage)
+    conditions.nextLink = (page >= conditions.totalPage ? null : process.env.APP_URI.concat(`user/schedule?page=${page + 1}`))
+    conditions.prevLink = (page <= 1 ? null : process.env.APP_URI.concat(`user/schedule?page=${page - 1}`))
     delete conditions.search
     delete conditions.sort
     delete conditions.limit

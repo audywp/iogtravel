@@ -82,12 +82,19 @@ module.exports = {
         if (await AuthModel.checkVerifiedUser) {
           if (await AuthModel.checkActivatedUser) {
             const payload = { id: info.id, username, roleId: info.role_id }
-            const options = { expiresIn: '600m' }
+            const options = { expiresIn: '800m' }
             const key = process.env.APP_KEY
             const token = jwt.sign(payload, key, options)
+            delete info.password
+            delete info.verification_code
+            delete info.is_active
+            delete info.is_verified
+            delete info.created_at
+            delete info.updated_at
             const data = {
               success: true,
-              token
+              data : info,
+              token,
             }
             res.send(data)
           } else {
@@ -168,6 +175,29 @@ module.exports = {
         }
         res.send(data)
       }
+    }
+  },
+  getUser: async (req, res) => {
+    const { username } = req.body
+    const user = await AuthModel.getUserByUsername(username)
+    delete user.password
+    delete user.verification_code
+    delete user.is_active
+    delete user.is_verified
+    delete user.created_at
+    delete user.updated_at
+    if (user) {
+      const data = {
+        success: true,
+        data: user
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg: `User with ${username} not found`
+      }
+      res.send(data)
     }
   }
 }

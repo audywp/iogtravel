@@ -1,13 +1,22 @@
 const UserdModel = require('../models/UserDetails')
+const UserModel = require('../models/Users')
 const AuthModel = require('../models/Auth')
 module.exports = {
   getUserDetailByIdUser: async function (req, res) {
+    const { id } = req.params
     const info = await AuthModel.getUserByUsername(req.user.username)
-    const detail = await UserdModel.getUserDetailByIdUser(info.id)
+    const detail = await UserdModel.getUserDetailByIdUser(id)
+    delete info.password
+    delete info.verification_code
+    delete info.is_active
+    delete info.is_verified
+    delete info.created_at
+    delete info.updated_at
     if (detail) {
       const data = {
         success: true,
-        detail
+        detail,
+        user: info
       }
       res.send(data)
     } else {
@@ -19,14 +28,17 @@ module.exports = {
     }
   },
   updateUserDetail: async function (req, res) {
-    const info = await UserdModel.getUserDetailByIdUser(req.user.id)
+    // const info = await UserdModel.getUserDetailByIdUser(req.user.id)
     // console.log(info.id_user)
+    const picture = (req.file && req.file.filename) || null
+    const { id } = req.params
     const { name, email, phone } = req.body
-    const newName = name || info.name
-    const newEmail = email || info.email
-    const newPhone = phone || info.phone
-    UserdModel.updateUserDetailByIdUser(info.id_user, newName, newEmail, newPhone)
-    const newDetail = await UserdModel.getUserDetailByIdUser(info.id_user)
+    const newName = name
+    const newEmail = email
+    const newPhone = phone
+    await UserModel.uploadImage(id, picture)
+    await UserdModel.updateUserDetailByIdUser(id, newName, newEmail, newPhone)
+    const newDetail = await UserdModel.getUserDetailByIdUser(id)
     const data = {
       success: true,
       msg: 'update success',
