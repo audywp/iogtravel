@@ -248,12 +248,134 @@ module.exports = {
     console.log(info.bus_seat)
   },
   getTransactionbyUser: async function (req, res) {
-    const info = await TransactionModel.getTransactionByUser(req.user.id)
-    console.log(info)
+    let { page, limit, search, sort } = req.query
+    page = parseInt(page) || 1
+    limit = parseInt(limit) || 5
+    search = (search && { key: search.key, value: search.value }) || { key: 'busses.car_name', value: '' }
+    sort = (sort && { key: sort.key, value: sort.value }) || { key: 'schedules.price', value: 1 }
+    const conditions = { page, perPage: limit, search, sort }
+    const info = await TransactionModel.getTransactionByUser(req.user.id, conditions)
+    conditions.total = await TransactionModel.getTotalTransaction(req.user.id)
+    conditions.totalPage = Math.ceil(conditions.total / conditions.perPage)
+    delete conditions.search
+    delete conditions.sort
+    delete conditions.limit
+    // console.log(info)
     const data = {
       success: true,
-      info
+      info,
+      pageInfo: conditions
     }
     res.send(data)
+  },
+  getScheduleByName: async (req, res) => {
+    const { agent, start, end } = req.body
+    const results = await TransactionModel.getScheduleByName(agent, start, end)
+    if (results.length > 0) {
+      const data = {
+        success: true,
+        msg: 'Schedules founded',
+        schedule : results
+      }
+      res.send(data)
+    } else {
+      const data = {
+        succes: false,
+        msg: 'Schedules not found'
+      }
+      res.send(data)
+    }
+  },
+  PaymentMethod: async (req, res) => {
+    const { name, orderId, amount, store, method, status } = req.body
+    const { id } = req.user
+    const results = await TransactionModel.PaymentMethod(id, name, orderId, amount, store, method, status)
+    if (results) {
+      const data={
+        success: true,
+        msg:'success create payment',
+        results
+      }
+      res.send(data)
+    } else {
+      const data={
+        success: false,
+        msg:'failed create payment'
+      }
+      res.send(data)
+    }
+  },
+  GetPaymentMethod: async (req, res) => {
+    const { id } = req.user
+    const results = await TransactionModel.GetPaymentMethod(id)
+    if (results) {
+      const data = {
+        success: true,
+        msg: 'Your Payment',
+        results
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg: 'no Payment'
+      }
+      res.send(data)
+    }
+  },
+
+  GetPaymentMethodById: async (req, res) => {
+    const { id } = req.params
+    const results = await TransactionModel.GetPaymentMethodById(id)
+    if (results) {
+      const data = {
+        success: true,
+        msg: 'Your Payment',
+        results
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg: 'no Payment'
+      }
+      res.send(data)
+    }
+  },
+
+  DeletePaymenMethod: async (req, res) => {
+    const { id } = req.user
+    const results = await TransactionModel.DeletePaymenMethod(id)
+    if (results) {
+      const data = {
+        success: true,
+        msg: 'Delete Success'
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg: 'Delete Failed'
+      }
+      res.send(data)
+    }
+  },
+  UpdatePayment: async(req, res) => {
+    const {id} = req.params
+    const results = await TransactionModel.UpdatePayment(id)
+    if (results) {
+      const data = {
+        success: true,
+        msg:'Update Succesfully',
+        results
+      }
+      res.send(data)
+    } else {
+      const data = {
+        success: false,
+        msg:'Update failed'
+      }
+      res.send(data)
+    }
   }
 }

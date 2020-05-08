@@ -48,12 +48,19 @@ const uploadImage = (req, res, next) => {
 }
 
 User.patch('/update', AuthToken.checkToken, UserControl.update)
-User.post('/register', AuthController.register)
 
+
+User.post('/register', AuthController.register)
 User.post('/login', AuthController.login)
 User.post('/transaction/add', AuthToken.checkToken, UserControl.Transaction)
+User.post('/payment', AuthToken.checkToken, UserControl.PaymentMethod)
+User.patch('/payment/:id', AuthToken.checkToken, UserControl.UpdatePayment)
+
+User.get('/order/:id', AuthToken.checkToken, UserControl.GetPaymentMethodById)
+User.get('/history', AuthToken.checkToken, UserControl.GetPaymentMethod)
 User.get('/detail/:id', AuthToken.checkToken, UserdControl.getUserDetailByIdUser)
 User.get('/schedule', UserControl.getScheduleForUser)
+User.post('/purchase', UserControl.getScheduleByName)
 User.get('/transaction', AuthToken.checkToken, UserControl.getTransactionbyUser)
 User.patch('/update/:id',uploadImage, AuthToken.checkToken, UserdControl.updateUserDetail)
 User.patch('/topup', AuthToken.checkToken, UserControl.topUp)

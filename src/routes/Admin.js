@@ -81,4 +81,5 @@ Admin.patch('/route/update/:idRoute', TokenMid.checkToken, AdminControl.updateRo
 Admin.patch('/agent/update', TokenMid.checkToken, AdminControl.updateAgent)
 Admin.patch('/bus/update', TokenMid.checkToken, AgenControl.updateBusses)
 Admin.patch('/schedule/update/:idSchedule', TokenMid.checkToken, AdminControl.updateScheduleByAdmin)
+
 module.exports = Admin

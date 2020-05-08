@@ -22,7 +22,7 @@ module.exports = {
   },
   getUserDetailByIdUser: function (id) {
     const table = 'user_details'
-    const query = `SELECT * FROM ${table} WHERE id_user='${id}'`
+    const query = `SELECT * FROM ${table} WHERE id_user=${id}`
     console.log(query)
     return new Promise(function (resolve, reject) {
       db.query(query, function (err, results, fields) {
