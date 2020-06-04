@@ -33,7 +33,7 @@ module.exports = {
           Mail.sendMail(
             email,
             "Iog - Travel Verification",
-            `CLick this link to verify your account: ${linkVerify}`
+            `CLick link to verify your account: ${linkVerify}`
           )
           const data = {
             success: true,
