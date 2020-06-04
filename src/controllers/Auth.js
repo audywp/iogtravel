@@ -6,6 +6,7 @@ const UserdModel = require('../models/UserDetails')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const uuid = require('uuid').v4
+const Mail = require('../utils/SendMail')
 
 module.exports = {
   register: async function (req, res) {
@@ -28,6 +29,12 @@ module.exports = {
       if (results) {
         if (await AuthModel.createVerificationCode(results, uuid())) {
           const code = await AuthModel.getVerificationCode(username)
+          const linkVerify = process.env.APP_URI.concat(`user/activate?username=${username}&code=${code.verification_code}`)
+          Mail.sendMail(
+            email,
+            "Iog - Travel Verification",
+            `CLick this link to verify your account: ${linkVerify}`
+          )
           const data = {
             success: true,
             msg: 'register success',
@@ -93,7 +100,7 @@ module.exports = {
             delete info.updated_at
             const data = {
               success: true,
-              data : info,
+              data: info,
               token,
             }
             res.send(data)
