@@ -58,7 +58,7 @@ User.patch('/payment/:id', AuthToken.checkToken, UserControl.UpdatePayment)
 
 User.get('/order/:id', AuthToken.checkToken, UserControl.GetPaymentMethodById)
 User.get('/history', AuthToken.checkToken, UserControl.GetPaymentMethod)
-User.get('/detail', UserdControl.getUserDetailByIdUser)
+User.get('/detail', AuthToken.checkToken, UserdControl.getUserDetailByIdUser)
 User.get('/schedule', UserControl.getScheduleForUser)
 User.post('/purchase', UserControl.getScheduleByName)
 User.get('/transaction', AuthToken.checkToken, UserControl.getTransactionbyUser)
