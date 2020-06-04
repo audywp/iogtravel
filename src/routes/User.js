@@ -52,7 +52,7 @@ User.patch('/update', AuthToken.checkToken, UserControl.update)
 
 User.post('/register', AuthController.register)
 User.post('/login', AuthController.login)
-User.post('/transaction/add', AuthToken.checkToken, UserControl.Transaction)
+User.post('/transaction/add', UserControl.Transaction)
 User.post('/payment', AuthToken.checkToken, UserControl.PaymentMethod)
 User.patch('/payment/:id', AuthToken.checkToken, UserControl.UpdatePayment)
 
