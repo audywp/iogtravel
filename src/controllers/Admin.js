@@ -277,7 +277,7 @@ module.exports = {
   readRoutes: async function (req, res) {
     let { page, limit, search, sort } = req.query
     page = parseInt(page) || 1
-    limit = parseInt(limit) || 5
+    limit = parseInt(limit) || 10
 
     let key = search && Object.keys(search)[0]
     let value = search && Object.values(search)[0]
