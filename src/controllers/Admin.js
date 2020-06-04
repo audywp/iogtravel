@@ -102,13 +102,6 @@ module.exports = {
     value = sort && Object.values(sort)[0]
     search = (sort && { key, value }) || { key: 'id', value: '' }
     const conditions = { page, perPage: limit, search, sort }
-    if (req.user.roleId !== 1) {
-      const data = {
-        success: false,
-        msg: 'You\'re not allowed to access this feature'
-      }
-      res.send(data)
-    }
     const results = await AgentModel.getAllAgents(conditions)
     conditions.totalData = await AgentModel.getTotalAgents(conditions)
     conditions.totalPage = Math.ceil(conditions.totalData / conditions.perPage)
@@ -168,7 +161,7 @@ module.exports = {
         res.send(data)
       }
       // const { idAgent, name, seat } = req.body
-    // await BussModel.CreateBus(idAgent, name, seat)
+      // await BussModel.CreateBus(idAgent, name, seat)
     } else {
       const data = {
         success: false,
@@ -641,7 +634,7 @@ module.exports = {
       res.send(data)
     }
   },
-  getEndRoute : async (req, res) => {
+  getEndRoute: async (req, res) => {
     const { start } = req.body
     const results = await AdminModel.getEndRoute(start)
     if (results) {
@@ -659,12 +652,12 @@ module.exports = {
       res.send(data)
     }
   },
-  updateScheduleByAdmin : async (req, res) => {
+  updateScheduleByAdmin: async (req, res) => {
     const { idSchedule } = req.params
-    const { date } =req.body
+    const { date } = req.body
     const results = await AdminModel.updateScheduleByAdmin(idSchedule, date)
     if (results) {
-      const data= {
+      const data = {
         success: true,
         msg: 'success',
         results
