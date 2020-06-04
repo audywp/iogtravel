@@ -3,13 +3,11 @@ const UserModel = require('../models/Users')
 const AuthModel = require('../models/Auth')
 module.exports = {
   getUserDetailByIdUser: async function (req, res) {
-    const { id } = req.params
     const info = await AuthModel.getUserByUsername(req.user.username)
-    const detail = await UserdModel.getUserDetailByIdUser(id)
+    const detail = await UserdModel.getUserDetailByIdUser(req.user.id)
     delete info.password
     delete info.verification_code
     delete info.is_active
-    delete info.is_verified
     delete info.created_at
     delete info.updated_at
     if (detail) {

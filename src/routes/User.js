@@ -58,11 +58,11 @@ User.patch('/payment/:id', AuthToken.checkToken, UserControl.UpdatePayment)
 
 User.get('/order/:id', AuthToken.checkToken, UserControl.GetPaymentMethodById)
 User.get('/history', AuthToken.checkToken, UserControl.GetPaymentMethod)
-User.get('/detail/:id', AuthToken.checkToken, UserdControl.getUserDetailByIdUser)
+User.get('/detail', AuthToken.checkToken, UserdControl.getUserDetailByIdUser)
 User.get('/schedule', UserControl.getScheduleForUser)
 User.post('/purchase', UserControl.getScheduleByName)
 User.get('/transaction', AuthToken.checkToken, UserControl.getTransactionbyUser)
-User.patch('/update/:id',uploadImage, AuthToken.checkToken, UserdControl.updateUserDetail)
+User.patch('/update/:id', uploadImage, AuthToken.checkToken, UserdControl.updateUserDetail)
 User.patch('/topup', AuthToken.checkToken, UserControl.topUp)
 // User.post('/add-agent', AuthToken.checkToken, UserControl.createAgent)\
 // test count
