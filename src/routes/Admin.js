@@ -52,7 +52,7 @@ Admin.post('/login', AuthControl.login)
 
 // get
 Admin.get('/users', TokenMid.checkToken, UserControl.read)
-Admin.get('/agent', TokenMid.checkToken, AdminControl.readAgent)
+Admin.get('/agent', AdminControl.readAgent)
 Admin.get('/agent/userId', TokenMid.checkToken, AdminControl.getAgentByUser)
 Admin.get('/bus', TokenMid.checkToken, AdminControl.readBus)
 Admin.get('/user-detail', TokenMid.checkToken, AdminControl.readUserDetail)
