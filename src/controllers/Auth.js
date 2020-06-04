@@ -95,7 +95,6 @@ module.exports = {
             delete info.password
             delete info.verification_code
             delete info.is_active
-            delete info.is_verified
             delete info.created_at
             delete info.updated_at
             const data = {
