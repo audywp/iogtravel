@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/audywp/iogtravel#readme",
   "devDependencies": {
-    "standard": "^14.3.3"
+    "standard": "^17.1.2"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
